@@ -33,12 +33,22 @@ let widgetPublicUrlOrPath = getPublicUrlOrPath(
   require(resolveApp('package.json')).widgetHomepage,
   process.env.WIDGET_PUBLIC_URL
 );
+let widgetUmdPublicUrlOrPath = getPublicUrlOrPath(
+  process.env.NODE_ENV === 'development',
+  require(resolveApp('package.json')).widgetHomepage,
+  process.env.WIDGET_UMD_PUBLIC_URL
+);
 if (widgetPublicUrlOrPath === '/') {
   widgetPublicUrlOrPath = '/widget/';
+}
+if (widgetUmdPublicUrlOrPath === '/') {
+  widgetUmdPublicUrlOrPath = '/widget-umd/';
 }
 
 const buildPath = process.env.BUILD_PATH || 'build';
 const widgetBuildPath = process.env.WIDGET_BUILD_PATH || 'build/widget';
+const widgetUmdBuildPath =
+  process.env.WIDGET_UMD_BUILD_PATH || 'build/widget-umd';
 
 const moduleFileExtensions = [
   'web.mjs',
@@ -71,8 +81,11 @@ const resolveModule = (resolveFn, filePath) => {
 module.exports = {
   dotenv: resolveApp('.env'),
   widgetBuild: resolveApp(widgetBuildPath),
+  widgetUmdBuild: resolveApp(widgetUmdBuildPath),
   widgetIndexJs: resolveModule(resolveApp, 'src/widget'),
+  widgetUmdIndexJs: resolveModule(resolveApp, 'src/widget'),
   widgetPublicUrlOrPath,
+  widgetUmdPublicUrlOrPath,
   appPath: resolveApp('.'),
   appBuild: resolveApp(buildPath),
   appPublic: resolveApp('public'),
@@ -97,8 +110,11 @@ const resolveOwn = relativePath => path.resolve(__dirname, '..', relativePath);
 module.exports = {
   dotenv: resolveApp('.env'),
   widgetBuild: resolveApp(widgetBuildPath),
+  widgetUmdBuild: resolveApp(widgetUmdBuildPath),
   widgetIndexJs: resolveModule(resolveApp, 'src/widget'),
+  widgetUmdIndexJs: resolveModule(resolveApp, 'src/widget'),
   widgetPublicUrlOrPath,
+  widgetUmdPublicUrlOrPath,
   appPath: resolveApp('.'),
   appBuild: resolveApp(buildPath),
   appPublic: resolveApp('public'),
@@ -136,8 +152,11 @@ if (
   module.exports = {
     dotenv: resolveOwn(`${templatePath}/.env`),
     widgetBuild: resolveApp(widgetBuildPath),
+    widgetUmdBuild: resolveApp(widgetUmdBuildPath),
     widgetIndexJs: resolveModule(resolveApp, 'src/widget'),
+    widgetUmdIndexJs: resolveModule(resolveApp, 'src/widget'),
     widgetPublicUrlOrPath,
+    widgetUmdPublicUrlOrPath,
     appPath: resolveApp('.'),
     appBuild: resolveOwn(path.join('../..', buildPath)),
     appPublic: resolveOwn(`${templatePath}/public`),

@@ -88,6 +88,7 @@ const hasJsxRuntime = (() => {
 })();
 
 const widgetConfigFactory = require('./webpackWidget.config');
+const widgetUmdConfigFactory = require('./webpackWidgetUMD.config');
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
@@ -803,6 +804,7 @@ module.exports = function (webpackEnv) {
   };
 
   const widgetConfig = widgetConfigFactory(webpackEnv);
+  const widgetUmdConfig = widgetUmdConfigFactory(webpackEnv);
 
-  return [widgetConfig, config];
+  return [widgetUmdConfig, widgetConfig, config];
 };
