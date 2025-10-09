@@ -47,6 +47,7 @@ $ yarn link se-cra-react-scripts
 
    ```
    $ npm login
+   # update package.json version
    $ npm publish
    ```
 
