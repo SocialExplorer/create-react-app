@@ -6,24 +6,29 @@ This fork includes the following changes:
 
 1. **New Webpack Configuration:**
 
-   - Introduces a new webpack configuration with a different entry point: `src/widget.js`.
+   - Introduces 2 webpack configurations with a different entry point: `src/widget.js`.
    - Aims to output a single JavaScript file.
-   - Outputs everything to `/widget` by default.
-   - The new webpack configuration accepts the following environment variables:
+   - Outputs everything to `/widget` and `/widget-umd` by default.
+   - The news webpack configurations accepts the following environment variables:
      - `WIDGET_PUBLIC_URL` (similar to `PUBLIC_URL`): Defaults to `"/widget/"`.
      - `WIDGET_BUILD_PATH` (similar to `BUILD_PATH`): Defaults to `"build/widget"`.
-   - The output is a UMD module, named after the `name` field in the project's `package.json` file when using CRA.
+     - `WIDGET_UMD_PUBLIC_URL` (similar to `PUBLIC_URL`): Defaults to `"/widget-umd/"`.
+     - `WIDGET_UMD_BUILD_PATH` (similar to `BUILD_PATH`): Defaults to `"build/widget-umd"`.
+   - There are 2 new outputs, SystemJS named after the `name` field in the project's `package.json` file when using CRA and UMD named `LAYOUT`.
 
 2. **Development Mode Enhancements:**
 
    - Dev server has CORS enabled
-   - You can pass a new argument `--widget` to the `start` script in development mode.
-   - When the `--widget` argument is passed, `webpack-dev-server` uses the new webpack configuration.
+   - You can pass 2 new arguments `--widget` and `--widget-umd` to the `start` script in development mode.
+     - When the `--widget` argument is passed, `webpack-dev-server` uses a new webpack configuration that outputs SystemJS.
+     - When the `--widget-umd` argument is passed, `webpack-dev-server` uses a new webpack configuration that outputs UMD.
    - `webpack-dev-server` accepts the following environment variable:
      - `WIDGET_PORT` (similar to `PORT`): Defaults to `3210`.
+     - `WIDGET_UMD_PORT` (similar to `PORT`): Defaults to `3220`.
 
 3. **Proxying Requests in Development Mode:**
    - In development mode, all requests to `/widget/**/*` are proxied to the `/widget/**/*` path of the `webpack-dev-server` instance running with the `--widget` argument.
+   - In development mode, all requests to `/widget-umd/**/*` are proxied to the `/widget-umd/**/*` path of the `webpack-dev-server` instance running with the `--widget-umd` argument.
 
 ### Steps to test locally
 

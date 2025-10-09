@@ -74,6 +74,7 @@ checkBrowsers(paths.appPath, isInteractive)
     // First, read the current file sizes in build directory.
     // This lets us display how much they changed later.
     return Promise.all([
+      measureFileSizesBeforeBuild(paths.widgetUmdBuild),
       measureFileSizesBeforeBuild(paths.widgetBuild),
       measureFileSizesBeforeBuild(paths.appBuild),
     ]);
@@ -110,6 +111,9 @@ checkBrowsers(paths.appPath, isInteractive)
       for (const [index, stat] of stats.stats.entries()) {
         let buildFolder = paths.appBuild;
         if (index === 0) {
+          // widget-umd config
+          buildFolder = paths.widgetUmdBuild;
+        } else if (index === 1) {
           // widget config
           buildFolder = paths.widgetBuild;
         }
@@ -129,6 +133,10 @@ checkBrowsers(paths.appPath, isInteractive)
         const publicPath = config.output.publicPath;
         let buildFolder = path.relative(process.cwd(), paths.appBuild);
         if (index === 0) {
+          // widget-umd config
+          publicUrl = paths.widgetUmdPublicUrlOrPath;
+          buildFolder = path.relative(process.cwd(), paths.widgetUmdBuild);
+        } else if (index === 1) {
           // widget config
           publicUrl = paths.widgetPublicUrlOrPath;
           buildFolder = path.relative(process.cwd(), paths.widgetBuild);
@@ -228,8 +236,9 @@ function build(previousFileSizes) {
 
       if (writeStatsJson) {
         return bfj
-          .write(paths.widgetBuild + '/bundle-stats.json', stats[0].toJson())
-          .write(paths.appBuild + '/bundle-stats.json', stats[1].toJson())
+          .write(paths.widgetUmdBuild + '/bundle-stats.json', stats[0].toJson())
+          .write(paths.widgetBuild + '/bundle-stats.json', stats[1].toJson())
+          .write(paths.appBuild + '/bundle-stats.json', stats[2].toJson())
           .then(() => resolve(resolveArgs))
           .catch(error => reject(new Error(error)));
       }

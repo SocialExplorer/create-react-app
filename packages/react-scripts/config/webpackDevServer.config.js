@@ -20,14 +20,17 @@ const getHttpsConfig = require('./getHttpsConfig');
 
 const argv = process.argv.slice(2);
 const startWidgetWebpackDevServer = argv.indexOf('--widget') !== -1;
+const startWidgetUmdWebpackDevServer = argv.indexOf('--widget-umd') !== -1;
 
 const host = process.env.HOST || '0.0.0.0';
 const sockHost = process.env.WDS_SOCKET_HOST;
 const sockPath = process.env.WDS_SOCKET_PATH; // default: '/sockjs-node'
 const sockPort = process.env.WDS_SOCKET_PORT;
 
-module.exports = function(proxy, allowedHost) {
-  const publicUrlOrPath = startWidgetWebpackDevServer
+module.exports = function (proxy, allowedHost) {
+  const publicUrlOrPath = startWidgetUmdWebpackDevServer
+    ? paths.widgetUmdPublicUrlOrPath
+    : startWidgetWebpackDevServer
     ? paths.widgetPublicUrlOrPath
     : paths.publicUrlOrPath;
   return {
@@ -103,7 +106,7 @@ module.exports = function(proxy, allowedHost) {
     // src/node_modules is not ignored to support absolute imports
     // https://github.com/facebook/create-react-app/issues/1065
     watchOptions: {
-      ignored: ignoredFiles(paths.appSrc)
+      ignored: ignoredFiles(paths.appSrc),
     },
     https: getHttpsConfig(),
     host,
@@ -112,7 +115,7 @@ module.exports = function(proxy, allowedHost) {
       // Paths with dots should still use the history fallback.
       // See https://github.com/facebook/create-react-app/issues/387.
       disableDotRule: true,
-      index: publicUrlOrPath
+      index: publicUrlOrPath,
     },
     public: allowedHost,
     // `proxy` is run between `before` and `after` `webpack-dev-server` hooks
@@ -143,6 +146,6 @@ module.exports = function(proxy, allowedHost) {
       // it used the same host and port.
       // https://github.com/facebook/create-react-app/issues/2272#issuecomment-302832432
       app.use(noopServiceWorkerMiddleware(publicUrlOrPath));
-    }
+    },
   };
 };
